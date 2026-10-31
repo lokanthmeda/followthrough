@@ -1,0 +1,264 @@
+We need to extract decisions and action items from the meeting transcript.
+
+First, parse the transcript.
+
+Participants: Anita, Lokanath, Priya, Rahul.
+
+Meeting date/time: 2026-10-31T10:00:00 (Asia/Kolkata). So relative dates need to be resolved against this date.
+
+We need to output JSON with meeting info, decisions, action items, open questions.
+
+We need to follow rules.
+
+Let's analyze each utterance.
+
+[0] Lokanath: Good morning everyone. Let's start with the product planning discussion for the Followthrough project. Our goal for this sprint is to launch the first working version by November 15th.
+
+This is a statement of goal, not necessarily a decision? Could be a decision? It's a goal, but might be considered a decision: launch first working version by Nov 15. However, it's a goal, not a decision? The rules: A DECISION is an agreement, policy, or choice made by the group. The group agrees on goal? Possibly a decision. But we need to see if it's a decision or just a statement. It's a project goal. Might be considered a decision: "launch the first working version by November 15th". But is it a decision? It's a target. Could be a decision. However, we need to extract decisions. Let's see if there is any explicit decision later.
+
+[1] Priya: I think the first priority should be the transcript ingestion and decision extraction module. Without that, the rest of the workflow won't work.
+
+This is a suggestion, not yet a decision.
+
+[2] Lokanath: Agreed. Let's make transcript ingestion the first priority. Priya, you own the transcript ingestion module. Please complete it by November 5th.
+
+This includes a decision: "make transcript ingestion the first priority". Also assigns action item to Priya.
+
+[3] Priya: Sure, I'll take ownership of that.
+
+Acceptance.
+
+[4] Lokanath: Rahul, can you handle the task tracker integration?
+
+Assignment question.
+
+[5] Rahul: Yes. I'll integrate the task tracker and make sure tasks can be created automatically after confirmation. I'll complete it by November 7th.
+
+Acceptance and commitment.
+
+[6] Lokanath: Good. Anita, please work on the weekly digest functionality. I want every team member to receive a summary of their open tasks every Friday.
+
+Assignment.
+
+[7] Anita: Okay. I'll complete the weekly digest by November 10th.
+
+Acceptance.
+
+[8] Lokanath: One more important decision: nothing should be automatically posted to the task tracker without a human confirmation. Even if the AI extracts an action item correctly, the user must confirm it before creating the task.
+
+Explicit decision.
+
+[9] Priya: Understood.
+
+[10] Lokanath: And let's use the existing PostgreSQL database for storing meeting memory and decisions.
+
+Decision.
+
+[11] Rahul: Okay, I'll use PostgreSQL for that.
+
+Acceptance.
+
+Now, we need to extract decisions and action items.
+
+Decisions:
+
+1. Priority: transcript ingestion is first priority. (From utterance 2)
+2. Human confirmation required before posting to task tracker. (Utterance 8)
+3. Use existing PostgreSQL database for storing meeting memory and decisions. (Utterance 10)
+
+Possibly also the goal to launch first working version by Nov 15? Could be a decision, but it's a goal, not necessarily a decision made in this meeting? It's stated as a goal. Might be considered a decision? The rules say "A DECISION is an agreement, policy, or choice made by the group". The group didn't explicitly agree to that goal in this meeting; it's stated as a given. However, it could be considered a decision. But we need to be careful. The prompt says "extract decisions and action items". Usually, goals are not decisions. But we can include it if it's a choice. Let's see if there is any agreement. Lokanath says "Our goal for this sprint is to launch the first working version by November 15th." No one objects, but it's not a decision per se. I'd lean to not include it as a decision, but could be included as a decision if we consider it a commitment. However, the rules: "A DECISION is an agreement, policy, or choice made by the group". The group hasn't explicitly made that choice; it's a pre-existing goal. So probably not.
+
+But we could include it as a decision with "statement": "Launch the first working version by November 15th". However, there is no explicit agreement; it's just stated. The other decisions are explicitly agreed. I'll omit it.
+
+But let's check if any other decisions: The priority setting is a decision. The human confirmation policy is a decision. The database choice is a decision.
+
+Also, maybe the decision to have weekly digest every Friday? That's an assignment, not a decision. The decision is to have the weekly digest functionality? Lokanath says "please work on the weekly digest functionality. I want every team member to receive a summary of their open tasks every Friday." That's a requirement, not a decision. It's an assignment. So not a decision.
+
+Thus decisions:
+
+- Decision 1: Transcript ingestion is the first priority.
+- Decision 2: Human confirmation required before posting to task tracker.
+- Decision 3: Use existing PostgreSQL database for storing meeting memory and decisions.
+
+We need to provide for each: statement, topic, entities, rationale, decided_by, commitment_strength, confidence, evidence, correction_note.
+
+Let's craft.
+
+Decision 1:
+Statement: "Transcript ingestion is the first priority."
+Topic: "priority" or "product planning"
+Entities: maybe feature "transcript ingestion"
+Rationale: "Without that, the rest of the workflow won't work." (from Priya's comment)
+Decided_by: The group? Lokanath announced, Priya agreed. Could be "Lokanath" or "group". The rule: "decided_by": "person name|null". Could be "Lokanath" as he made the decision, but it's agreed. I'd put "Lokanath" or null. Let's see: "Lokanath: Agreed. Let's make transcript ingestion the first priority." So he decided after Priya's suggestion. So decided_by: "Lokanath". Or could be "group". But schema expects person name or null. I'll use "Lokanath".
+Commitment_strength: "firm" (it's agreed)
+Confidence: high, say 0.95
+Evidence: utterance 2 (Lokanath) and maybe 1 (Priya) but primary is 2.
+Correction_note: null.
+
+Decision 2:
+Statement: "Nothing should be automatically posted to the task tracker without a human confirmation."
+Topic: "task tracker integration" or "policy"
+Entities: maybe "human confirmation", "task tracker"
+Rationale: "Even if the AI extracts an action item correctly, the user must confirm it before creating the task." (from same utterance)
+Decided_by: "Lokanath" (he says "One more important decision")
+Commitment_strength: "firm"
+Confidence: 0.95
+Evidence: utterance 8.
+
+Decision 3:
+Statement: "Use the existing PostgreSQL database for storing meeting memory and decisions."
+Topic: "database choice"
+Entities: "PostgreSQL"
+Rationale: null? He just says "And let's use the existing PostgreSQL database". No explicit rationale.
+Decided_by: "Lokanath"
+Commitment_strength: "firm"
+Confidence: 0.95
+Evidence: utterance 10.
+
+Now action items.
+
+We have:
+
+1. Priya: own transcript ingestion module, complete by November 5th.
+2. Rahul: integrate task tracker, complete by November 7th.
+3. Anita: weekly digest functionality, complete by November 10th.
+4. Rahul: use PostgreSQL for storing meeting memory and decisions? Actually that's a decision, but Rahul says "Okay, I'll use PostgreSQL for that." This could be an action item: implement the database usage? But it's more of a decision that he will use it. Could be an action item: "Use PostgreSQL for storing meeting memory and decisions". Owner: Rahul? But the decision is to use PostgreSQL, and Rahul acknowledges. However, is it an action item? The decision is made, and Rahul says he'll use it. That could be an action item: "Implement storage using PostgreSQL". But it's vague. The prompt says "An ACTION ITEM is a task committed to or assigned to a specific person". Rahul's statement "Okay, I'll use PostgreSQL for that." is a commitment. So we could extract an action item: "Use PostgreSQL for storing meeting memory and decisions" with owner Rahul. But it's closely related to the decision. However, rule 3: "DO NOT duplicate decisions as action items or vice-versa." So if we have a decision about using PostgreSQL, we shouldn't also have an action item that is essentially the same. But the action item is the implementation of that decision. It might be distinct. However, the decision is the policy, the action item is the task to implement it. But the transcript doesn't specify any further action beyond the decision; Rahul just acknowledges. It might be considered part of his role. But we need to be exhaustive. Let's see: The decision is "use existing PostgreSQL". The action item could be "Rahul to use PostgreSQL for storing meeting memory and decisions". But that's essentially the same as the decision. To avoid duplication, we might not create a separate action item. However, the rule says "DO NOT duplicate decisions as action items or vice-versa." So we should not create an action item that is exactly the decision. But if there is a distinct task, we can. In this case, the decision is to use PostgreSQL, and Rahul's statement is just acceptance, not a separate task. So I'd skip an action item for that.
+
+But we have the other action items.
+
+Let's list action items:
+
+1. Transcript ingestion module
+   - Title: "Build transcript ingestion module"
+   - Description: "Develop the transcript ingestion and decision extraction module as the first priority."
+   - Owner: Priya
+   - Owner_source: assigned (Lokanath assigned, Priya accepted)
+   - Due_date: November 5th, 2026? Need to resolve relative date. Meeting date is 2026-10-31. November 5th is 2026-11-05. So due_date: "2026-11-05"
+   - Due_phrase: "by November 5th"
+   - Commitment_strength: firm
+   - Confidence: 0.95
+   - Flags: [] (owner and due_date present)
+   - Evidence: utterance 2 (Lokanath) and 3 (Priya)
+   - Correction_note: null
+   - Related_decision_index: 0 (the decision that transcript ingestion is first priority)
+
+2. Task tracker integration
+   - Title: "Integrate task tracker"
+   - Description: "Integrate the task tracker and ensure tasks can be created automatically after confirmation."
+   - Owner: Rahul
+   - Owner_source: assigned (Lokanath asked, Rahul accepted)
+   - Due_date: November 7th, 2026 -> "2026-11-07"
+   - Due_phrase: "by November 7th"
+   - Commitment_strength: firm
+   - Confidence: 0.95
+   - Flags: []
+   - Evidence: utterance 4, 5
+   - Related_decision_index: maybe 1? The decision about human confirmation is related. But the action item is to integrate task tracker, which includes automatic creation after confirmation. The decision about human confirmation is separate. Could relate to decision index 1 (human confirmation). Or could be related to decision index 0? Not exactly. We'll set related_decision_index to 1 (the human confirmation policy) because the integration must respect that. Or could be null. But we can set to 1.
+
+3. Weekly digest functionality
+   - Title: "Build weekly digest functionality"
+   - Description: "Develop the weekly digest functionality so that every team member receives a summary of their open tasks every Friday."
+   - Owner: Anita
+   - Owner_source: assigned
+   - Due_date: November 10th, 2026 -> "2026-11-10"
+   - Due_phrase: "by November 10th"
+   - Commitment_strength: firm
+   - Confidence: 0.95
+   - Flags: []
+   - Evidence: utterance 6, 7
+   - Related_decision_index: null? There's no direct decision, but it's a task. Could be related to the goal? Not needed.
+
+Now, are there any other action items? Possibly "Use PostgreSQL" but we decided not to duplicate.
+
+Also, maybe "Ensure human confirmation before posting" is a decision, not an action item. But could be an action item for someone to implement that? Not explicitly assigned. So no.
+
+Now, open questions: The transcript doesn't have any open questions. So empty array.
+
+Now, we need to output JSON.
+
+We must include meeting info: title, started_at, timezone.
+
+Title: Could be "Followthrough project product planning" or something. The transcript starts with "product planning discussion for the Followthrough project". So title: "Followthrough Product Planning" or "Product Planning Discussion". Let's use "Followthrough Product Planning".
+
+Started_at: "2026-10-31T10:00:00" (given). Timezone: "Asia/Kolkata".
+
+Now, decisions array.
+
+We need to assign indices for related_decision_index in action items.
+
+Let's define decisions with indices:
+
+0: Transcript ingestion first priority
+1: Human confirmation required
+2: Use PostgreSQL
+
+Now, action items:
+
+- Priya's task: related_decision_index: 0 (since it's directly about the priority)
+- Rahul's task tracker integration: related_decision_index: 1 (since it involves human confirmation)
+- Anita's weekly digest: related_decision_index: null (or maybe 0? Not directly). We'll set null.
+
+Now, we need to ensure each decision and action item has evidence with utterance_seq and speaker.
+
+Let's collect evidence.
+
+Decision 0:
+Evidence: utterance_seq 2, speaker Lokanath, quote: "Agreed. Let's make transcript ingestion the first priority. Priya, you own the transcript ingestion module. Please complete it by November 5th."
+Also could include utterance 1 as supporting, but one is enough.
+
+Decision 1:
+Evidence: utterance_seq 8, speaker Lokanath, quote: "One more important decision: nothing should be automatically posted to the task tracker without a human confirmation. Even if the AI extracts an action item correctly, the user must confirm it before creating the task."
+
+Decision 2:
+Evidence: utterance_seq 10, speaker Lokanath, quote: "And let's use the existing PostgreSQL database for storing meeting memory and decisions."
+
+Action item 0 (Priya):
+Evidence: utterance_seq 2 (assignment) and 3 (acceptance). We'll include both? The schema expects an array of evidence objects. We can include multiple. So include utterance 2 and 3.
+
+Action item 1 (Rahul):
+Evidence: utterance_seq 4 (Lokanath asks) and 5 (Rahul accepts). Include both.
+
+Action item 2 (Anita):
+Evidence: utterance_seq 6 (Lokanath assigns) and 7 (Anita accepts). Include both.
+
+Now, for each action item, we need owner_source. It's "assigned" because Lokanath assigned and they accepted. Could also be "self" if they volunteered, but here it's assigned. So owner_source: "assigned".
+
+Now, due_date: We need to resolve relative dates. Meeting date is 2026-10-31. November 5th is 2026-11-05. November 7th is 2026-11-07. November 10th is 2026-11-10.
+
+Now, flags: Must be empty array because owner and due_date are present.
+
+Now, correction_note: null for all, as no corrections.
+
+Now, open_questions: [].
+
+Now, confidence: For decisions, we can set 0.95. For action items, 0.95.
+
+Now, entities for decisions: We need to extract entities of type product, vendor, date, number, person, feature.
+
+For decision 0: topic "priority". Entities: maybe feature "transcript ingestion". Also date "November 5th"? But that's due date for action item, not decision. The decision itself doesn't have a date. Could include "transcript ingestion module" as feature. Also "Followthrough project" as product? Not necessary. Let's keep simple.
+
+Entities: [{"type": "feature", "value": "transcript ingestion module"}]
+
+Decision 1: Entities: [{"type": "policy", "value": "human confirmation"}? But allowed types: product, vendor, date, number, person, feature. "policy" not allowed. Could use "feature" or "product"? Maybe "task tracker" as product? Or "human confirmation" as feature? Not sure. We can use "feature" for "human confirmation". Or we can leave empty. The schema says entities is an array of objects with type and value. We can include relevant entities. For decision 1, the entity could be "task tracker" as product? Or "human confirmation" as feature. I'd include "task tracker" as product. Also "AI" maybe not. Let's include [{"type": "product", "value": "task tracker"}, {"type": "feature", "value": "human confirmation"}].
+
+Decision 2: Entities: [{"type": "product", "value": "PostgreSQL"}] or vendor? PostgreSQL is a product. Could be "database". Use "product".
+
+Now, for action items, we don't need entities.
+
+Now, rationale for decisions: For decision 0, rationale: "Without transcript ingestion, the rest of the workflow won't work." (from Priya). We can quote that. For decision 1, rationale: "Even if the AI extracts an action item correctly, the user must confirm it before creating the task." For decision 2, rationale: null.
+
+Now, decided_by: For decision 0, it's Lokanath (he announced). For decision 1, Lokanath. For decision 2, Lokanath.
+
+Now, commitment_strength: all firm.
+
+Now, we need to output JSON.
+
+Let's construct.
+
+Meeting: {"title": "Followthrough Product Planning", "started_at": "2026-10-31T10:00:00", "timezone": "Asia/Kolkata"}
+
+Decisions:
+
+[
+  {
+    "statement": "Transcript ingestion is the first priority.",

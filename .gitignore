@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+.next/
+.nuxt/
+dist/
+*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS & Media
+.DS_Store
+Thumbs.db
+*.wav
+*.mp3
+*.m4a
