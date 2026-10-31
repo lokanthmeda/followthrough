@@ -303,3 +303,4 @@ Your environment is 100% verified and ready to record!
 1. **Highlight the Verbatim Evidence**: In the Review screen, hover over or point to the quotation badges on decisions and tasks. Emphasize that nothing is hallucinated.
 2. **Point out the Hard Gate Status**: Emphasize that tasks start in `DRAFT / PENDING_REVIEW` and cannot reach external trackers without approval.
 3. **Emphasize the Red Contradiction Card**: When Meeting 2 is processed, pause for 3 seconds to let the viewer see the bright red contradiction warning with side-by-side quotes. This is the centerpiece of the demo!
+

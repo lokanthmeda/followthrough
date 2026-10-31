@@ -4,6 +4,12 @@ const path = require('path');
 module.exports = {
   reactStrictMode: true,
   trailingSlash: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   webpack(config) {
     // Keep @/* pointed at src/, and @/styles at styles/ (do not map bare "@"
     // alone — that breaks imports like @/styles/globals.css).

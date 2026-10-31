@@ -194,7 +194,32 @@ Access the UI at: 👉 **http://localhost:3001**
 
 ---
 
-## 7. Automated 1-Click Verification Test
+## 7. Deploy to Vercel
+
+The Followthrough web application is fully optimized for continuous deployment on **Vercel**.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flokanthmeda%2Ffollowthrough&root-directory=web&env=BACKEND_URL&project-name=followthrough-web)
+
+### Step-by-Step Vercel Deployment Instructions
+
+1. **Log in to Vercel**:
+   Go to [vercel.com](https://vercel.com) and click **"Add New..."** → **"Project"**.
+2. **Import GitHub Repository**:
+   Select or search for **`lokanthmeda/followthrough`** and click **Import**.
+3. **Configure Project Settings**:
+   * **Framework Preset**: `Next.js` (automatically detected).
+   * **Root Directory**: Click *Edit* and select **`web`** (or enter `web`).
+   * **Build Command**: `next build` (pre-configured in `web/vercel.json`).
+   * **Output Directory**: `.next` (default).
+4. **Environment Variables**:
+   Add the following environment variable under *Environment Variables*:
+   * `BACKEND_URL`: The public HTTPS URL where your FastAPI backend is running (e.g. `https://your-backend.railway.app` or `https://api.followthrough.internal`).
+5. **Click "Deploy"**:
+   Vercel will build and deploy the Next.js app in less than 60 seconds with global CDN and edge routing enabled!
+
+---
+
+## 8. Automated 1-Click Verification Test
 
 To run the complete 5-minute demo script automatically (including database baseline initialization, Meeting 1 extraction, task posting, Meeting 2 cross-meeting conflict detection, confirmation resolution, reminders, and weekly digests):
 
